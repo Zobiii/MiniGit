@@ -33,4 +33,9 @@ public class CommitManager
         var json = JsonSerializer.Serialize(commits, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(Path.Combine(RepoFolder, CommitsFile), json);
     }
+
+    public Commit? GetCommitById(string Id)
+    {
+        return LoadCommits().FirstOrDefault(c => c.Id.Equals(Id, StringComparison.OrdinalIgnoreCase));
+    }
 }

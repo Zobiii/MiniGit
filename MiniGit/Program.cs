@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel.Design;
+using System.Runtime.CompilerServices;
 
 class Program
 {
@@ -28,6 +29,15 @@ class Program
 
             case "commit":
                 CommitsFile(manager, args.Skip(1).ToArray());
+                break;
+
+            case "checkout":
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Bitte Commit-ID angeben: minigit checkout <id>");
+                    return;
+                }
+                ShowCommitInfo(manager, args[1]);
                 break;
 
             default:
@@ -62,5 +72,30 @@ class Program
         manager.SaveCommits(commits);
 
         Console.WriteLine($"Commit erstellt mit ID: {newCommit.Id}");
+    }
+
+    static void ShowCommitInfo(CommitManager manager, string id)
+    {
+        var commit = manager.GetCommitById(id);
+        if (commit == null)
+        {
+            Console.WriteLine($"Kein Commit mit ID {id} gefunden.");
+            return;
+        }
+
+        Console.WriteLine($"Commit {commit.Id} ({commit.Timestamp})");
+        Console.WriteLine($"Nachricht: {commit.Message}\n");
+
+        if (commit.Files.Count == 0)
+        {
+            Console.WriteLine("Keine Dateien in Commit");
+            return;
+        }
+
+        Console.WriteLine("Enthaltene Dateien:");
+        foreach (var file in commit.Files)
+        {
+            Console.WriteLine($"- {file.Key} => {file.Value}");
+        }
     }
 }
