@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Xml.Serialization;
 
 public class CommitManager
 {
@@ -25,7 +24,7 @@ public class CommitManager
         var path = Path.Combine(RepoFolder, CommitsFile);
         if (!File.Exists(path)) return new();
         string json = File.ReadAllText(path);
-        return JsonSerializer.Deserialize<List<Commit>>(json);
+        return JsonSerializer.Deserialize<List<Commit>>(json) ?? new List<Commit>();
     }
 
     public void SaveCommits(List<Commit> commits)

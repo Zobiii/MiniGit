@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
+using Minigit.Utils;
 
 class Program
 {
@@ -50,8 +51,17 @@ class Program
     {
         string message = messageArgs.Length > 0 ? string.Join(" ", messageArgs) : "Kein Commit-Text";
 
+        var ignorePatterns = FileHelper.LoadIgnorePatterns();
+
+        Console.WriteLine("Minigitignore geladen:");
+        foreach (var pattern in ignorePatterns)
+        {
+            Console.WriteLine("  → " + pattern);
+        }
+
+
         var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories)
-            .Where(f => !f.Contains(".minigit"))
+            .Where(f => !FileHelper.ShouldIgnore(f, ignorePatterns))
             .ToList();
 
         var fileHashes = files.ToDictionary(

@@ -1,0 +1,10 @@
+.git/
+.minigit/
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.json
+*.sln
+minigit/
