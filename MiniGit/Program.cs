@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
+using System.Xml.Schema;
 using Minigit.Utils;
 
 class Program
@@ -39,6 +40,10 @@ class Program
                     return;
                 }
                 ShowCommitInfo(manager, args[1]);
+                break;
+
+            case "status":
+                ShowStatus(manager);
                 break;
 
             default:
@@ -106,6 +111,61 @@ class Program
         foreach (var file in commit.Files)
         {
             Console.WriteLine($"- {file.Key} => {file.Value}");
+        }
+    }
+
+    static void ShowStatus(CommitManager manager)
+    {
+        var ignorePatterns = FileHelper.LoadIgnorePatterns();
+        var allFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories);
+
+        var currentFiles = allFiles
+            .Select(path => Path.GetRelativePath(Directory.GetCurrentDirectory(), path))
+            .Where(rel => !FileHelper.ShouldIgnore(rel, ignorePatterns))
+            .ToList();
+
+        var currentHashes = currentFiles.ToDictionary(
+            rel => rel,
+            rel => FileHasher.ComputeHash(Path.Combine(Directory.GetCurrentDirectory(), rel))
+        );
+
+        var lastCommit = manager.LoadCommits().LastOrDefault();
+        if (lastCommit == null)
+        {
+            Console.WriteLine("Kein Commit vorhanden");
+            return;
+        }
+
+        var previousFiles = lastCommit.Files;
+
+        var newFiles = currentHashes.Keys.Except(previousFiles.Keys).ToList();
+        var deletedFiles = previousFiles.Keys.Except(currentHashes.Keys).ToList();
+        var changedFiles = currentHashes.Keys
+            .Where(f => previousFiles.ContainsKey(f) && previousFiles[f] != currentHashes[f])
+            .ToList();
+
+        if (!newFiles.Any() && !changedFiles.Any() && !deletedFiles.Any())
+        {
+            Console.WriteLine("✅ Keine Änderungen seit letztem Commit.");
+            return;
+        }
+
+        if (newFiles.Any())
+        {
+            Console.WriteLine("\n🆕 Neue Dateien:");
+            foreach (var f in newFiles) Console.WriteLine("  + " + f);
+        }
+
+        if (changedFiles.Any())
+        {
+            Console.WriteLine("\n✏️  Geänderte Dateien:");
+            foreach (var f in changedFiles) Console.WriteLine("  ~ " + f);
+        }
+
+        if (deletedFiles.Any())
+        {
+            Console.WriteLine("\n❌ Gelöschte Dateien:");
+            foreach (var f in deletedFiles) Console.WriteLine("  - " + f);
         }
     }
 }
