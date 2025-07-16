@@ -46,6 +46,10 @@ class Program
                 ShowStatus(manager);
                 break;
 
+            case "diff":
+                ShowDiff(manager);
+                break;
+
             default:
                 Console.WriteLine("Unbekannter Befehl.");
                 break;
@@ -67,11 +71,12 @@ class Program
 
         var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories)
             .Where(f => !FileHelper.ShouldIgnore(f, ignorePatterns))
+            .Select(f => Path.GetRelativePath(Directory.GetCurrentDirectory(), f))
             .ToList();
 
         var fileHashes = files.ToDictionary(
             path => Path.GetRelativePath(Directory.GetCurrentDirectory(), path),
-            path => FileHasher.ComputeHash(path)
+            path => FileHasher.ComputeHash(Path.GetRelativePath(Directory.GetCurrentDirectory(), path))
         );
 
         var newCommit = new Commit
@@ -85,6 +90,19 @@ class Program
         var commits = manager.LoadCommits();
         commits.Add(newCommit);
         manager.SaveCommits(commits);
+
+        string snapshotDir = Path.Join(".minigit", "snapshots");
+        Directory.CreateDirectory(snapshotDir);
+
+        foreach (var file in files)
+        {
+            Console.WriteLine(file);
+            string hash = fileHashes[file];
+            string target = Path.Join(snapshotDir, $"{Path.GetRelativePath(Directory.GetCurrentDirectory(), file)}.{hash}.bak");
+            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+            
+            File.Copy(file, target, overwrite: true);
+        }
 
         Console.WriteLine($"Commit erstellt mit ID: {newCommit.Id}");
     }
@@ -166,6 +184,63 @@ class Program
         {
             Console.WriteLine("\n❌ Gelöschte Dateien:");
             foreach (var f in deletedFiles) Console.WriteLine("  - " + f);
+        }
+    }
+
+    static void ShowDiff(CommitManager manager)
+    {
+        var lastCommit = manager.LoadCommits().LastOrDefault();
+        if (lastCommit == null)
+        {
+            Console.WriteLine("Kein Commit vorhanden");
+            return;
+        }
+
+        foreach (var file in lastCommit.Files)
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), file.Key);
+            if (!File.Exists(path))
+                continue;
+
+            var currentLines = File.ReadAllLines(path);
+            var oldHash = file.Value;
+            var currentHash = FileHasher.ComputeHash(path);
+
+            if (oldHash == currentHash)
+            {
+                continue;
+            }
+
+            Console.WriteLine($"\n Unterschied in: {file.Key}");
+
+            var oldFilePath = Path.Combine(".minigit", "snapshots", $"{file.Key}.{oldHash}.bak");
+            if (!File.Exists(oldFilePath))
+            {
+                Console.WriteLine("Alte Version nicht gespeichert - kein Vergleich möglich");
+                continue;
+            }
+
+            var oldLines = File.ReadAllLines(oldFilePath);
+            PrintLineDiff(oldLines, currentLines);
+        }
+    }
+
+    static void PrintLineDiff(string[] oldLines, string[] newLines)
+    {
+        int max = Math.Max(oldLines.Length, newLines.Length);
+        for (int i = 0; i < max; max++)
+        {
+            string oldLine = i < oldLines.Length ? oldLines[i] : "";
+            string newLine = i < newLines.Length ? newLines[i] : "";
+
+            if (oldLine != newLine)
+            {
+                if (!string.IsNullOrEmpty(oldLine))
+                    Console.WriteLine($" - {oldLine}");
+
+                if (!string.IsNullOrEmpty(newLine))
+                    Console.WriteLine($" + {newLine}");
+            }
         }
     }
 }
