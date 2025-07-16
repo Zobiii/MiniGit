@@ -1,7 +1,5 @@
 **/bin
 **/obj
 *.csproj.user
-data.txt
-text.txt
 .minigit/
-test/
+*.txt
