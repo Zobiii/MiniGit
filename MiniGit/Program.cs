@@ -15,6 +15,7 @@ class Program
             c.AddCommand<CheckoutCommand>("checkout");
             c.AddCommand<StatusCommand>("status");
             c.AddCommand<DiffCommand>("diff");
+            c.AddCommand<LogCommand>("log");
         });
         return app.Run(args);
     }
