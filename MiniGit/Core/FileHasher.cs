@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+using MiniGit.Core;
 
 public static class FileHasher
 {
@@ -12,3 +13,4 @@ public static class FileHasher
         return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
     }
 }
+

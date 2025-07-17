@@ -1,25 +1,12 @@
 using System.Text.Json;
 
-public class CommitManager
+public static class CommitManager
 {
     private const string RepoFolder = ".minigit";
     private const string CommitsFile = "commits.json";
 
-    public void Init()
-    {
-        if (!Directory.Exists(RepoFolder))
-        {
-            Directory.CreateDirectory(RepoFolder);
-            File.WriteAllText(Path.Combine(RepoFolder, CommitsFile), "[]");
-            Console.WriteLine("MiniGit-Repository initialisiert.");
-        }
-        else
-        {
-            Console.WriteLine("Repository existiert bereits.");
-        }
-    }
 
-    public List<Commit> LoadCommits()
+    public static List<Commit> LoadCommits()
     {
         var path = Path.Combine(RepoFolder, CommitsFile);
         if (!File.Exists(path)) return new();
@@ -27,13 +14,13 @@ public class CommitManager
         return JsonSerializer.Deserialize<List<Commit>>(json) ?? new List<Commit>();
     }
 
-    public void SaveCommits(List<Commit> commits)
+    public static void SaveCommits(List<Commit> commits)
     {
         var json = JsonSerializer.Serialize(commits, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(Path.Combine(RepoFolder, CommitsFile), json);
     }
 
-    public Commit? GetCommitById(string Id)
+    public static Commit? GetCommitById(string Id)
     {
         return LoadCommits().FirstOrDefault(c => c.Id.Equals(Id, StringComparison.OrdinalIgnoreCase));
     }

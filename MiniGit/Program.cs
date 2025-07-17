@@ -1,73 +1,21 @@
-﻿using MiniGit.Core;
+﻿using MiniGit.Commands;
+using MiniGit.Core;
+using Spectre.Console.Cli;
 
 class Program
 {
-    static void Main(string[] args)
+    static int Main(string[] args)
     {
-        if (args.Length == 0)
+        var app = new CommandApp();
+        app.Configure(c =>
         {
-            ShowHelp();
-            return;
-        }
-
-        var commitManager = new CommitManager();
-        var commandHandler = new CommandHandler(commitManager);
-
-        switch (args[0].ToLower())
-        {
-            case "init":
-                commitManager.Init();
-                break;
-
-            case "log":
-                commandHandler.HandleLog();
-                break;
-
-            case "commit":
-                commandHandler.HandleCommit(args.Skip(1).ToArray());
-                break;
-
-            case "checkout":
-                if (args.Length < 2)
-                {
-                    Console.WriteLine("Bitte Commit-ID angeben: minigit checkout <id>");
-                    return;
-                }
-                commandHandler.HandleCheckout(args[1]);
-                break;
-
-            case "status":
-                commandHandler.HandleStatus();
-                break;
-
-            case "diff":
-                commandHandler.HandleDiff();
-                break;
-
-            case "help":
-            case "-h":
-            case "--help":
-                ShowHelp();
-                break;
-
-            default:
-                Console.WriteLine($"Unbekannter Befehl: {args[0]}");
-                ShowHelp();
-                break;
-        }
-    }
-
-    private static void ShowHelp()
-    {
-        Console.WriteLine("MiniGit - Ein einfaches Versionskontrollsystem");
-        Console.WriteLine();
-        Console.WriteLine("Verfügbare Befehle:");
-        Console.WriteLine("  init     - Repository initialisieren");
-        Console.WriteLine("  commit   - Dateien committen (optional: Nachricht)");
-        Console.WriteLine("  log      - Commit-Historie anzeigen");
-        Console.WriteLine("  status   - Aktuellen Status anzeigen");
-        Console.WriteLine("  diff     - Unterschiede seit letztem Commit anzeigen");
-        Console.WriteLine("  checkout - Commit-Informationen anzeigen");
-        Console.WriteLine("  help     - Diese Hilfe anzeigen");
+            c.SetApplicationName("Hure");
+            c.AddCommand<InitCommand>("init");
+            c.AddCommand<CommitCommand>("commit");
+            c.AddCommand<CheckoutCommand>("checkout");
+            c.AddCommand<StatusCommand>("status");
+            c.AddCommand<DiffCommand>("diff");
+        });
+        return app.Run(args);
     }
 }

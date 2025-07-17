@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Minigit.Utils;
+namespace MiniGit.Utils;
 
 public static class FileHelper
 {
