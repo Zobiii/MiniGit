@@ -21,13 +21,10 @@ public sealed class InitCommand : Command<InitCommand.Settings>
             Directory.CreateDirectory(RepoFolder);
             File.WriteAllText(Path.Combine(RepoFolder, CommitsFile), "[]");
             AnsiConsole.Status()
-                .Start("Thinking...", ctx =>
+                .Start("Creating repository...", ctx =>
                 {
                     // Simulate some work
-                    AnsiConsole.MarkupLine(".minigit wird erstellt...");
-                    Thread.Sleep(3000);
-                    AnsiConsole.MarkupLine("commits.json wird erstellt...");
-                    Thread.Sleep(3000);
+                    Thread.Sleep(2500);
 
                     // Update the status and spinner
                     ctx.Status("Wird Abgeschlossen...");
@@ -36,12 +33,26 @@ public sealed class InitCommand : Command<InitCommand.Settings>
 
                     // Simulate some work
                     AnsiConsole.MarkupLine("Repository erstellt.");
-                    Thread.Sleep(6000);
+                    Thread.Sleep(2500);
                 });
         }
         else
         {
-            Console.WriteLine("Repository existiert bereits.");
+            AnsiConsole.Status()
+                .Start("Creating repository...", ctx =>
+                {
+                    // Simulate some work
+                    Thread.Sleep(2500);
+
+                    // Update the status and spinner
+                    ctx.Status("Wird Abgebrochen...");
+                    ctx.Spinner(Spinner.Known.Star);
+                    ctx.SpinnerStyle(Style.Parse("red"));
+
+                    // Simulate some work
+                    AnsiConsole.MarkupLine("Repository existiert bereits.");
+                    Thread.Sleep(2500);
+                });
         }
         return 0;
 
