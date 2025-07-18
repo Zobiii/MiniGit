@@ -5,20 +5,22 @@ namespace MiniGit.Core
 {
     public static class CommandHandler
     {
-        public static void CreateSnapshot(List<string> files, Dictionary<string, string> fileHashes)
+        public static void CreateSnapshot(List<string> files, string commitId)
         {
-            string snapshotDir = Path.Join(".minigit", "snapshots");
-            Directory.CreateDirectory(snapshotDir);
+            string snapshotRoot = Path.Combine(".minigit", "snapshots", commitId);
 
             foreach (var file in files)
             {
-                Console.WriteLine(file);
-                string hash = fileHashes[file];
-                string target = Path.Join(snapshotDir, $"{Path.GetRelativePath(Directory.GetCurrentDirectory(), file)}.{hash}.bak");
-                Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+                var relativePath = Path.GetRelativePath(Directory.GetCurrentDirectory(), file);
+                var targetPath = Path.Combine(snapshotRoot, relativePath);
 
-                File.Copy(file, target, overwrite: true);
+                var targetDir = Path.GetDirectoryName(targetPath);
+                if (!string.IsNullOrWhiteSpace(targetDir))
+                    Directory.CreateDirectory(targetDir);
+
+                File.Copy(file, targetPath, overwrite: true);
             }
+            Console.WriteLine($"📦 Snapshot gespeichert unter: {snapshotRoot}");
         }
 
         public static StatusInfo GetStatusInfo()

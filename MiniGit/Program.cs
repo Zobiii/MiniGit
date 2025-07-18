@@ -29,6 +29,12 @@ class Program
 
             c.AddCommand<LogCommand>("log")
                 .WithDescription("Show the commit history, newest first");
+
+            c.AddCommand<RestoreCommand>("restore")
+                .WithDescription("Restore a file from a specific or the last commit.")
+                .WithExample(new[] { "restore", "\"abc.txt\"" })
+                .WithExample(new[] { "restore", "\"abc.txt\"", "\"a1b2c3d4\"" });
+
         });
         return app.Run(args);
     }

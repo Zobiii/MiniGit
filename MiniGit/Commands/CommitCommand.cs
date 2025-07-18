@@ -50,7 +50,7 @@ public sealed class CommitCommand : Command<CommitCommand.Settings>
         commits.Add(newCommit);
         CommitManager.SaveCommits(commits);
 
-        CommandHandler.CreateSnapshot(files, fileHashes);
+        CommandHandler.CreateSnapshot(files, newCommit.Id);
 
         Console.WriteLine($"Commit erstellt mit ID: {newCommit.Id}");
 
