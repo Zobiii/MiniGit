@@ -1,5 +1,4 @@
 ﻿using MiniGit.Commands;
-using MiniGit.Core;
 using Spectre.Console.Cli;
 
 class Program

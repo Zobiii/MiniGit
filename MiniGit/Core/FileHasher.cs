@@ -1,7 +1,5 @@
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using System.Text;
-using MiniGit.Core;
+
 
 public static class FileHasher
 {

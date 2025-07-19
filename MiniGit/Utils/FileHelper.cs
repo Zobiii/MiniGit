@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace MiniGit.Utils;
 
 public static class FileHelper
