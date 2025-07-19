@@ -3,3 +3,4 @@
 *.csproj.user
 .minigit/
 *.txt
+*.json

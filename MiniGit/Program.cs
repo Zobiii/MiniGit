@@ -34,6 +34,9 @@ class Program
                 .WithExample(new[] { "restore", "\"abc.txt\"" })
                 .WithExample(new[] { "restore", "\"abc.txt\"", "\"a1b2c3d4\"" });
 
+            c.AddCommand<VerifyCommand>("verify")
+                .WithDescription("Verify if files in working directory math the last commit");
+
         });
         return app.Run(args);
     }
