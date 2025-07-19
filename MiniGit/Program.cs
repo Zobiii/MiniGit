@@ -40,6 +40,10 @@ class Program
             c.AddCommand<SummaryCommand>("summary")
                 .WithDescription("Show a summary of recent commits and file state");
 
+            c.AddCommand<ExportCommand>("export")
+                .WithDescription("Export snapshot of commit as .zip archive")
+                .WithExample(new[] { "export", "a1b2c3d4" });
+
         });
         return app.Run(args);
     }
