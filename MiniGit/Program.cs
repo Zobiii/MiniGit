@@ -37,6 +37,9 @@ class Program
             c.AddCommand<VerifyCommand>("verify")
                 .WithDescription("Verify if files in working directory math the last commit");
 
+            c.AddCommand<SummaryCommand>("summary")
+                .WithDescription("Show a summary of recent commits and file state");
+
         });
         return app.Run(args);
     }
