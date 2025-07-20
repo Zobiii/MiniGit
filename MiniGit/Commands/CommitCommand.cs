@@ -2,6 +2,7 @@ using Spectre.Console.Cli;
 using MiniGit.Utils;
 using MiniGit.Core;
 
+
 namespace MiniGit.Commands;
 
 public sealed class CommitCommand : Command<CommitCommand.Settings>
@@ -25,10 +26,7 @@ public sealed class CommitCommand : Command<CommitCommand.Settings>
             Console.WriteLine("  → " + pattern);
         }
 
-        var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories)
-            .Where(f => !FileHelper.ShouldIgnore(f, ignorePatterns))
-            .Select(f => Path.GetRelativePath(Directory.GetCurrentDirectory(), f))
-            .ToList();
+        var files = CommandHandler.GetFilesToProcess(Environment.CurrentDirectory).ToList();
 
         var fileHashes = files.ToDictionary(
             path => Path.GetRelativePath(Directory.GetCurrentDirectory(), path),

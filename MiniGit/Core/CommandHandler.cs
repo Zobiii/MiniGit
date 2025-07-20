@@ -1,5 +1,6 @@
 using System.Data;
 using System.Runtime.CompilerServices;
+using MiniGit.Commands;
 using MiniGit.Utils;
 
 namespace MiniGit.Core
@@ -27,7 +28,7 @@ namespace MiniGit.Core
         public static StatusInfo GetStatusInfo()
         {
             var ignorePatterns = FileHelper.LoadIgnorePatterns();
-            var allFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories);
+            var allFiles = GetFilesToProcess(Environment.CurrentDirectory).ToList();
 
             var currentFiles = allFiles
                 .Select(path => Path.GetRelativePath(Directory.GetCurrentDirectory(), path))
@@ -75,6 +76,17 @@ namespace MiniGit.Core
                 string dest = Path.Combine(dir, relPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
                 File.Copy(file, dest, true);
+            }
+        }
+
+        public static IEnumerable<string> GetFilesToProcess(string workingDir)
+        {
+            var ignore = FileHelper.LoadIgnorePatterns();
+
+            foreach (var file in Directory.EnumerateFiles(workingDir, "*.*", SearchOption.AllDirectories))
+            {
+                if (!FileHelper.ShouldIgnore(file, ignore))
+                    yield return file;
             }
         }
     }
