@@ -1,10 +1,12 @@
-﻿using MiniGit.Commands;
+﻿using System.Text;
+using MiniGit.Commands;
 using Spectre.Console.Cli;
 
 class Program
 {
     static int Main(string[] args)
     {
+        Console.OutputEncoding = Encoding.UTF8;
         var app = new CommandApp();
         app.Configure(c =>
         {
@@ -43,6 +45,11 @@ class Program
             c.AddCommand<ExportCommand>("export")
                 .WithDescription("Export snapshot of commit as .zip archive")
                 .WithExample(new[] { "export", "a1b2c3d4" });
+
+            c.AddCommand<AmendCommand>("amend")
+                .WithDescription("Update the last commit's message and file state")
+                .WithExample(new[] { "amend", "\"Fix typo in readme\"" })
+                .WithExample(new[] { "amend" });
 
         });
         return app.Run(args);

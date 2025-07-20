@@ -1,4 +1,5 @@
 using System.Data;
+using System.Runtime.CompilerServices;
 using MiniGit.Utils;
 
 namespace MiniGit.Core
@@ -58,6 +59,23 @@ namespace MiniGit.Core
                 ChangedFiles = changedFiles,
                 DeletedFiles = deletedFiles
             };
+        }
+
+        public static void ReplaceSnapshot(string commitId, List<string> files, Dictionary<string, string> hashes)
+        {
+            string dir = Path.Combine(".minigit", "snapshots", commitId);
+            if (Directory.Exists(dir))
+                Directory.Delete(dir, recursive: true);
+
+            Directory.CreateDirectory(dir);
+
+            foreach (var file in files)
+            {
+                string relPath = Path.GetRelativePath(Directory.GetCurrentDirectory(), file);
+                string dest = Path.Combine(dir, relPath);
+                Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
+                File.Copy(file, dest, true);
+            }
         }
     }
 

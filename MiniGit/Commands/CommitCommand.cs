@@ -9,13 +9,13 @@ public sealed class CommitCommand : Command<CommitCommand.Settings>
     public sealed class Settings : CommandSettings
     {
         [CommandArgument(0, "<message>")]
-        public string[] messageArgs { get; set; } = [];
+        public string[] MessageArgs { get; set; } = [];
     }
 
     public override int Execute(CommandContext context, Settings settings)
     {
 
-        string message = settings.messageArgs.Length > 0 ? string.Join(" ", settings.messageArgs) : "Kein Commit-Text";
+        string message = settings.MessageArgs.Length > 0 ? string.Join(" ", settings.MessageArgs) : "Kein Commit-Text";
 
         var ignorePatterns = FileHelper.LoadIgnorePatterns();
 
