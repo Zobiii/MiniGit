@@ -36,7 +36,7 @@ public static class Logger
             _ => "[white][[LOG]][/]"
         };
 
-        AnsiConsole.MarkupLine($"{tag} {message}");
+        AnsiConsole.MarkupLine($"{tag} - {caller}.cs - {message}");
     }
 
     public static void INFO(string msg) => Log("INFO", msg);

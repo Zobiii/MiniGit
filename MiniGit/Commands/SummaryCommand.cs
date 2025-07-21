@@ -39,14 +39,14 @@ public sealed class SummaryCommand : Command<SummaryCommand.Settings>
 
         var allKeys = new HashSet<string>(last.Files.Keys.Concat(hashes.Keys));
 
-        var table = new Table().Border(TableBorder.Rounded).Title("\nLast Commits");
+        var table = new Table().Border(TableBorder.Rounded).Title("\nLast 5 Commits");
         table.AddColumn("ID");
         table.AddColumn("Timestamp");
         table.AddColumn("Message");
 
         var lastCommits = commits
             .OrderByDescending(c => c.Timestamp)
-            .Take(3)
+            .Take(5)
             .ToList();
 
         foreach (var c in lastCommits)
