@@ -47,17 +47,17 @@ public sealed class VerifyCommand : Command<VerifyCommand.Settings>
             if (inCommit && inCurrent)
             {
                 if (last.Files[key] == currentHashes[key])
-                    AnsiConsole.MarkupLine($"[green]{key} - unchanged[/]");
+                    Output.Console($"[green]{key} - unchanged[/]");
                 else
-                    AnsiConsole.MarkupLine($"[red]{key} - modified[/]");
+                    Output.Console($"[red]{key} - modified[/]");
             }
             else if (inCommit && !inCurrent)
             {
-                AnsiConsole.MarkupLine($"[yellow]{key} - missing from working dir[/]");
+                Output.Console($"[yellow]{key} - missing from working dir[/]");
             }
             else if (!inCommit && inCurrent)
             {
-                AnsiConsole.MarkupLine($"[blue]{key} - untracked[/]");
+                Output.Console($"[blue]{key} - untracked[/]");
             }
         }
         return 0;
