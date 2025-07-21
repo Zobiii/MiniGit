@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using MiniGit.Commands;
+using MiniGit.Utils;
 using Spectre.Console.Cli;
 
 class Program
@@ -50,6 +51,9 @@ class Program
                 .WithDescription("Update the last commit's message and file state")
                 .WithExample(new[] { "amend", "\"Fix typo in readme\"" })
                 .WithExample(new[] { "amend" });
+
+            c.AddCommand<LoggerCommand>("logger")
+                .WithDescription("Enable/Disable logger");
 
         });
         return app.Run(args);

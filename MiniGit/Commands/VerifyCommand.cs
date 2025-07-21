@@ -19,7 +19,7 @@ public sealed class VerifyCommand : Command<VerifyCommand.Settings>
 
         if (commits.Count == 0)
         {
-            AnsiConsole.MarkupLine("[red]No commits found.[/]");
+            Logger.ERROR("No commits found");
             return 1;
         }
 
