@@ -55,6 +55,9 @@ class Program
             c.AddCommand<LoggerCommand>("logger")
                 .WithDescription("Enable/Disable logger");
 
+            c.AddCommand<FileLoggerCommand>("flogger")
+                .WithDescription("Enable/Disable file logger");
+
         });
         return app.Run(args);
     }

@@ -4,14 +4,14 @@ using System.Diagnostics;
 using System.Reflection.Emit;
 using Spectre.Console;
 
-public static class Logger
+public static class FileLogger
 {
     private static bool _enabled = LoadStatus();
     private static readonly string _logPath = Path.Combine(".minigit", "logs.txt");
 
     private static bool LoadStatus()
     {
-        string path = Path.Combine(".minigit", "logger.config");
+        string path = Path.Combine(".minigit", "filelogger.config");
         return File.Exists(path) && File.ReadAllText(path).Trim() == "true";
     }
 
@@ -47,7 +47,7 @@ public static class Logger
     public static void SetEnabled(bool enable)
     {
         Directory.CreateDirectory(".minigit");
-        File.WriteAllText(Path.Combine(".minigit", "logger.config"), enable.ToString().ToLower());
+        File.WriteAllText(Path.Combine(".minigit", "filelogger.config"), enable.ToString().ToLower());
         _enabled = enable;
     }
 
