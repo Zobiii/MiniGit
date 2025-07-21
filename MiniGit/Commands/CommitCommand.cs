@@ -18,14 +18,6 @@ public sealed class CommitCommand : Command<CommitCommand.Settings>
 
         string message = settings.MessageArgs.Length > 0 ? string.Join(" ", settings.MessageArgs) : "Kein Commit-Text";
 
-        var ignorePatterns = FileHelper.LoadIgnorePatterns();
-
-        Console.WriteLine("Minigitignore geladen:");
-        foreach (var pattern in ignorePatterns)
-        {
-            Console.WriteLine("  → " + pattern);
-        }
-
         var files = CommandHandler.GetFilesToProcess(Environment.CurrentDirectory).ToList();
 
         var fileHashes = files.ToDictionary(

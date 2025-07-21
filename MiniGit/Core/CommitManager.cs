@@ -9,9 +9,13 @@ public static class CommitManager
 
     public static List<Commit> LoadCommits()
     {
-        Logger.INFO("Loading commits...");
+        Logger.INFO("Loading all commits...");
         var path = Path.Combine(RepoFolder, CommitsFile);
-        if (!File.Exists(path)) return new();
+        if (!File.Exists(path))
+        {
+            Logger.WARN($"Folder '{RepoFolder}' or file '{CommitsFile}' does not exist, creating one...");
+            return new();
+        }
         string json = File.ReadAllText(path);
         List<Commit>? op = JsonSerializer.Deserialize<List<Commit>>(json);
         Logger.DEBUG($"Loaded all commits succesfully: {op?.Count ?? 0} commits");
@@ -20,8 +24,10 @@ public static class CommitManager
 
     public static void SaveCommits(List<Commit> commits)
     {
+        Logger.INFO($"Started saving commits: {commits.Count}");
         var json = JsonSerializer.Serialize(commits, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(Path.Combine(RepoFolder, CommitsFile), json);
+        Logger.DEBUG($"Saved '{commits.Count}' commits at '{CommitsFile}'");
     }
 
     public static Commit? GetCommitById(string Id)
