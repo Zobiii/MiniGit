@@ -1,5 +1,6 @@
 using Spectre.Console.Cli;
 using MiniGit.Utils;
+using Spectre.Console;
 
 namespace MiniGit.Commands;
 
@@ -31,9 +32,10 @@ public sealed class DiffCommand : Command<DiffCommand.Settings>
             if (oldHash == currentHash)
                 continue;
 
-            Console.WriteLine($"\n Unterschied in: {file.Key}");
+            Console.WriteLine($"\nUnterschied in: {file.Key}");
 
-            var oldFilePath = Path.Combine(".minigit", "snapshots", $"{file.Key}.{oldHash}.bak");
+            var oldFilePath = Path.Combine(".minigit", "snapshots", $"{lastCommit.Id}", $"{file.Key}");
+
             if (!File.Exists(oldFilePath))
             {
                 Console.WriteLine("Alte Version nicht gespeichert - kein Vergleich möglich");
@@ -44,6 +46,7 @@ public sealed class DiffCommand : Command<DiffCommand.Settings>
             var currentLines = File.ReadAllLines(path);
             DiffHelper.PrintLineDiff(oldLines, currentLines);
         }
+        Logger.INFO("No difference to last commit");
         return 0;
     }
 }
