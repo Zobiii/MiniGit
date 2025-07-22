@@ -19,24 +19,27 @@ public static class Logger
     {
         if (!_enabled) return;
 
-        var caller = new StackTrace().GetFrame(2)?.GetMethod()?.DeclaringType?.Name ?? "Unknown";
+        var frame = new StackTrace().GetFrame(2);
+        var method = frame?.GetMethod()?.Name ?? "Unknown";
+        var file = frame?.GetMethod()?.DeclaringType?.Name ?? "Unknown";
+
 
         string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-        string fileLog = $"{timestamp} - {caller}.cs - {level.ToUpper()} - {message}";
+        string fileLog = $"{timestamp} - {file}.cs - {method} - {level.ToUpper()} - {message}";
 
         Directory.CreateDirectory(".minigit");
         File.AppendAllText(_logPath, fileLog + Environment.NewLine);
 
         var tag = level.ToUpper() switch
         {
-            "INFO" => "[blue][[INFO]][/]",
+            "INFO" => "[blue][[INFO]] [/]",
             "WARN" => "[yellow][[WARN]][/]",
             "ERROR" => "[red][[ERROR]][/]",
             "DEBUG" => "[darkgoldenrod][[DEBUG]][/]",
             _ => "[white][[LOG]][/]"
         };
 
-        AnsiConsole.MarkupLine($"{tag} - {caller}.cs - {message}");
+        AnsiConsole.MarkupLine($"{tag} - {file}.cs - {method} - {message}");
     }
 
     public static void INFO(string msg) => Log("INFO", msg);
@@ -50,6 +53,7 @@ public static class Logger
         File.WriteAllText(Path.Combine(".minigit", "logger.config"), enable.ToString().ToLower());
         _enabled = enable;
     }
+
 
     public static bool IsEnable() => _enabled;
 }
