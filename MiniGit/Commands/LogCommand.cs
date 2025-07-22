@@ -1,3 +1,4 @@
+using MiniGit.Utils;
 using Spectre.Console.Cli;
 
 namespace MiniGit.Commands;
@@ -17,7 +18,7 @@ public sealed class LogCommand : Command<LogCommand.Settings>
 
         if (!commits.Any())
         {
-            System.Console.WriteLine("Keine Commits");
+            Output.Console("No commit");
             return 0;
         }
 
