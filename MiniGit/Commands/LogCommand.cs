@@ -19,6 +19,7 @@ public sealed class LogCommand : Command<LogCommand.Settings>
         if (!commits.Any())
         {
             Output.Console("No commit");
+            Output.Console("test");
             return 0;
         }
 
