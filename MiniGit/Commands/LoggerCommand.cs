@@ -19,11 +19,17 @@ public class LoggerCommand : Command<LoggerCommand.Settings>
         {
             "true" => true,
             "false" => false,
-            _ => throw new Exception("Use: minigit logger true|false")
+            _ => HandleInvalidState()
         };
 
+        bool HandleInvalidState()
+        {
+            Output.Console($"[red]Error[/]: Use minigit logger true/false");
+            return false;
+        }
+
         Logger.SetEnabled(enable);
-        AnsiConsole.MarkupLine($"[green]Logger {(enable ? "enabled" : "disabled")}[/]");
+        Output.Console($"Logger {(enable ? "enabled" : "disabled")}");
         return 0;
     }
 }

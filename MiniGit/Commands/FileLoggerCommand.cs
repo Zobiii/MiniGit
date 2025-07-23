@@ -19,11 +19,17 @@ public class FileLoggerCommand : Command<FileLoggerCommand.Settings>
         {
             "true" => true,
             "false" => false,
-            _ => throw new Exception("Use: minigit logger true|false")
+            _ => HandleInvalidState()
         };
 
+        bool HandleInvalidState()
+        {
+            Output.Console($"[red]Error[/]: Use minigit flogger true/false");
+            return false;
+        }
+
         FileLogger.SetEnabled(enable);
-        AnsiConsole.MarkupLine($"[green]FileLogger {(enable ? "enabled" : "disabled")}[/]");
+        Output.Console($"FileLogger {(enable ? "enabled" : "disabled")}");
         return 0;
     }
 }
