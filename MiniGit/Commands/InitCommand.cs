@@ -1,3 +1,4 @@
+using MiniGit.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -20,6 +21,10 @@ public sealed class InitCommand : Command<InitCommand.Settings>
         {
             Directory.CreateDirectory(RepoFolder);
             File.WriteAllText(Path.Combine(RepoFolder, CommitsFile), "[]");
+            Logger.SetEnabled(true);
+            FileLogger.SetEnabled(false);
+            string snapshotRoot = Path.Combine(".minigit", "snapshots");
+            Directory.CreateDirectory(snapshotRoot);
             AnsiConsole.Status()
                 .Start("Creating repository...", ctx =>
                 {
@@ -32,7 +37,7 @@ public sealed class InitCommand : Command<InitCommand.Settings>
                     ctx.SpinnerStyle(Style.Parse("green"));
 
                     // Simulate some work
-                    AnsiConsole.MarkupLine("Repository erstellt.");
+                    Output.Console("Repository erstellt.");
                     Thread.Sleep(2500);
                 });
         }
@@ -50,7 +55,7 @@ public sealed class InitCommand : Command<InitCommand.Settings>
                     ctx.SpinnerStyle(Style.Parse("red"));
 
                     // Simulate some work
-                    AnsiConsole.MarkupLine("Repository existiert bereits.");
+                    Output.Console("Repository existiert bereits.");
                     Thread.Sleep(2500);
                 });
         }
