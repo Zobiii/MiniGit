@@ -1,5 +1,5 @@
 .git/
-.mingit/
+.minigit/
 bin/
 obj/
 *.exe
