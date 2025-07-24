@@ -19,6 +19,7 @@ public sealed class CommitCommand : Command<CommitCommand.Settings>
         string message = settings.MessageArgs.Length > 0 ? string.Join(" ", settings.MessageArgs) : "Kein Commit-Text";
 
         var files = CommandHandler.GetFilesToProcess(Environment.CurrentDirectory).ToList();
+        Logger.DEBUG("Recieved files for further processing");
 
         var fileHashes = files.ToDictionary(
             path => Path.GetRelativePath(Directory.GetCurrentDirectory(), path),
@@ -36,12 +37,17 @@ public sealed class CommitCommand : Command<CommitCommand.Settings>
 
 
         var commits = CommitManager.LoadCommits();
+
         commits.Add(newCommit);
+        Logger.INFO("Submitted new commit");
+
         CommitManager.SaveCommits(commits);
+        Logger.INFO($"Commit: {newCommit.Id} saved");
+
+        Output.Console($"Commit erstellt mit ID: {newCommit.Id}");
 
         CommandHandler.CreateSnapshot(files, newCommit.Id);
-
-        Console.WriteLine($"Commit erstellt mit ID: {newCommit.Id}");
+        Logger.DEBUG($"Created new snapshot folder: {newCommit.Id}");
 
         return 0;
     }

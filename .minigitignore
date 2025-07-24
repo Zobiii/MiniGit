@@ -1,11 +1,12 @@
 .git/
-.minigit/
+.mingit/
 bin/
 obj/
 *.exe
 *.dll
 *.pdb
-
 *.sln
 minigit/
 *.zip
+.gitignore
+.minigitignore
