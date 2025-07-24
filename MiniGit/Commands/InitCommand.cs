@@ -19,12 +19,21 @@ public sealed class InitCommand : Command<InitCommand.Settings>
 
         if (!Directory.Exists(RepoFolder))
         {
+            Logger.SetEnabled(false);
+            Logger.INFO("Creating repository folder...");
+            Logger.INFO("Creating logger conifg...");
+
+            FileLogger.SetEnabled(false);
+            Logger.INFO("Creating filelogger config...");
+
             Directory.CreateDirectory(RepoFolder);
             File.WriteAllText(Path.Combine(RepoFolder, CommitsFile), "[]");
-            Logger.SetEnabled(true);
-            FileLogger.SetEnabled(false);
+            Logger.INFO("Creating file commits.json...");
+
             string snapshotRoot = Path.Combine(".minigit", "snapshots");
             Directory.CreateDirectory(snapshotRoot);
+            Logger.INFO("Creating snapshot folder...");
+
             AnsiConsole.Status()
                 .Start("Creating repository...", ctx =>
                 {
@@ -43,6 +52,7 @@ public sealed class InitCommand : Command<InitCommand.Settings>
         }
         else
         {
+            Logger.DEBUG("Repository files already exist, return...");
             AnsiConsole.Status()
                 .Start("Creating repository...", ctx =>
                 {

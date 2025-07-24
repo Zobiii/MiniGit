@@ -5,7 +5,8 @@ obj/
 *.exe
 *.dll
 *.pdb
-
 *.sln
 minigit/
 *.zip
+.gitignore
+.minigitignore

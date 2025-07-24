@@ -24,8 +24,15 @@ namespace MiniGit.Core
             {
                 var relativePath = Path.GetRelativePath(Directory.GetCurrentDirectory(), file);
                 var targetPath = Path.Combine(snapshotRoot, relativePath);
+                var subdir = Path.GetDirectoryName(targetPath);
+
+                if (!Directory.Exists(subdir))
+                {
+                    Directory.CreateDirectory(subdir!);
+                }
                 File.Copy(file, targetPath, overwrite: true);
                 Logger.DEBUG($"Copying file {file} to snapshot folder with id: {commitId}");
+
             }
             Output.Console($"Snapshot gespeichert unter: {snapshotRoot}");
         }

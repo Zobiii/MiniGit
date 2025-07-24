@@ -1,3 +1,5 @@
+using Microsoft.VisualBasic;
+
 namespace MiniGit.Utils;
 
 public static class FileHelper
@@ -29,13 +31,15 @@ public static class FileHelper
             .Replace(Path.DirectorySeparatorChar, '/')
             .ToLower();
 
+        var dirs = normalizedPath.Split("/");
+
         foreach (var pattern in ignorePatterns)
         {
             string p = pattern.Replace("\\", "/").Trim().ToLower();
 
             if (p.EndsWith("/")) // Ordner
             {
-                if (normalizedPath.Contains(p.TrimEnd('/')))
+                if (dirs.Contains(p.TrimEnd('/')))
                 {
                     FileLogger.DEBUG($"File '{filePath}' is ignored due to directory pattern '{pattern}'");
                     return true;
