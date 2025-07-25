@@ -15,6 +15,7 @@ public sealed class CommitCommand : Command<CommitCommand.Settings>
 
     public override int Execute(CommandContext context, Settings settings)
     {
+        Logger.DEBUG("Command commit executed");
 
         string message = settings.MessageArgs.Length > 0 ? string.Join(" ", settings.MessageArgs) : "Kein Commit-Text";
 

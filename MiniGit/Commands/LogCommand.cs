@@ -12,21 +12,28 @@ public sealed class LogCommand : Command<LogCommand.Settings>
 
     public override int Execute(CommandContext context, Settings settings)
     {
+        Logger.DEBUG("Command log executed");
+
+        Logger.DEBUG("Getting all commits");
+
         var commits = CommitManager.LoadCommits()
             .OrderByDescending(c => c.Timestamp)
             .ToList();
 
         if (!commits.Any())
         {
-            Output.Console("No commit");
+            Output.Console("No commits found");
             return 0;
         }
 
+        Output.Break();
+
         foreach (var commit in commits)
         {
-            System.Console.WriteLine($"\nCommit {commit.Id} - {commit.Timestamp:G}");
-            System.Console.WriteLine($"     - Dateien: {commit.Files.Count}");
-            System.Console.WriteLine($"     - Nachricht: {commit.Message}\n");
+            Output.Console($"Commit {commit.Id} - {commit.Timestamp:G}");
+            Output.Console($"     - Dateien: {commit.Files.Count}");
+            Output.Console($"     - Nachricht: {commit.Message}");
+            Output.Break();
         }
 
         return 0;

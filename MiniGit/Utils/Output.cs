@@ -10,5 +10,10 @@ namespace MiniGit.Utils
         {
             AnsiConsole.MarkupLine($"{Prefix} {message}");
         }
+
+        public static void Break()
+        {
+            System.Console.WriteLine();
+        }
     }
 }
