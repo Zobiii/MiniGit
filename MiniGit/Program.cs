@@ -52,9 +52,6 @@ class Program
                 .WithExample(new[] { "amend", "\"Fix typo in readme\"" })
                 .WithExample(new[] { "amend" });
 
-            c.AddCommand<LogTreeCommand>("logtree")
-                .WithDescription("Displays all commits in an ASCII tree view");
-
             c.AddCommand<LoggerCommand>("logger")
                 .WithDescription("Enable/Disable logger");
 
