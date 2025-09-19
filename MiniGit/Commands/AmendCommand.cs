@@ -41,7 +41,12 @@ public sealed class AmendCommand : Command<AmendCommand.Settings>
         last.Message = settings.Message.Length > 0 ? string.Join(" ", settings.Message) : last.Message;
         last.Files = hashes;
 
-        CommitManager.SaveCommits(commits);
+        bool success = CommitManager.SaveCommits(commits);
+        if (!success)
+        {
+            AnsiConsole.MarkupLine("[red]Fehler: Commit konnte nicht gespeichert werden (Repository gesperrt?)[/]");
+            return 1;
+        }
         CommandHandler.ReplaceSnapshot(last.Id, files, hashes);
 
         AnsiConsole.MarkupLine($"[green]Commit [bold]{last.Id}[/] amended.[/]");

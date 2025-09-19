@@ -1,5 +1,6 @@
 using System.Text.Json;
 using MiniGit.Utils;
+using MiniGit.Core;
 
 public static class CommitManager
 {
@@ -22,13 +23,19 @@ public static class CommitManager
         return op ?? new List<Commit>();
     }
 
-    public static void SaveCommits(List<Commit> commits)
+
+    public static bool SaveCommits(List<Commit> commits)
     {
         Logger.INFO($"Started saving commits: {commits.Count}");
-        var json = JsonSerializer.Serialize(commits, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(Path.Combine(RepoFolder, CommitsFile), json);
-        Logger.DEBUG($"Saved '{commits.Count}' commits at '{CommitsFile}'");
+
+        return RepositoryLock.ExecuteWithLock(() =>
+        {
+            var json = JsonSerializer.Serialize(commits, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(Path.Combine(RepoFolder, CommitsFile), json);
+            Logger.DEBUG($"Saved '{commits.Count}' commits at '{CommitsFile}'");
+        });
     }
+
 
     public static Commit? GetCommitById(string Id)
     {

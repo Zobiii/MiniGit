@@ -42,7 +42,12 @@ public sealed class CommitCommand : Command<CommitCommand.Settings>
         commits.Add(newCommit);
         Logger.INFO("Submitted new commit");
 
-        CommitManager.SaveCommits(commits);
+        bool success = CommitManager.SaveCommits(commits);
+        if (!success)
+        {
+            Output.Console("Fehler: Commit konnte nicht gespeichert werden (Repository gesperrt?)");
+            return 1;
+        }
         Logger.INFO($"Commit: {newCommit.Id} saved");
 
         Output.Console($"Commit erstellt mit ID: {newCommit.Id}");
