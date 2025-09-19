@@ -1,5 +1,6 @@
 using Spectre.Console.Cli;
 using Spectre.Console;
+using MiniGit.Utils;
 
 namespace MiniGit.Commands;
 
@@ -37,7 +38,14 @@ public sealed class RestoreCommand : Command<RestoreCommand.Settings>
             return 1;
         }
 
-        var relativePath = Path.GetRelativePath(Directory.GetCurrentDirectory(), settings.File!);
+        string? validatedPath = PathValidator.ValidateAndSanitizePath(settings.File!);
+        if (validatedPath == null)
+        {
+            AnsiConsole.MarkupLine($"[red]Invalid or unsafe file path: '{settings.File}'[/]");
+            return 1;
+        }
+
+        var relativePath = Path.GetRelativePath(Directory.GetCurrentDirectory(), validatedPath);
 
         if (commit == null || !commit.Files.ContainsKey(relativePath))
         {
@@ -64,7 +72,7 @@ public sealed class RestoreCommand : Command<RestoreCommand.Settings>
             return 1;
         }
 
-        File.Copy(snapshotPath, settings.File, overwrite: true);
+        File.Copy(snapshotPath, validatedPath, overwrite: true);
 
         AnsiConsole.MarkupLine($"[green]Restored[/] '{relativePath}' from commit [yellow]{commit.Id}[/]");
 
