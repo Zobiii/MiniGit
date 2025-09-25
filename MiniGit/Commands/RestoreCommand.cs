@@ -72,9 +72,20 @@ public sealed class RestoreCommand : Command<RestoreCommand.Settings>
             return 1;
         }
 
-        File.Copy(snapshotPath, validatedPath, overwrite: true);
+        var (success, backupPath) = FileBackup.SafeOverwrite(snapshotPath, validatedPath);
 
-        AnsiConsole.MarkupLine($"[green]Restored[/] '{relativePath}' from commit [yellow]{commit.Id}[/]");
+        if (!success)
+        {
+            AnsiConsole.MarkupLine($"[red]Failed to restore file safely. Check logs for details.[/]");
+            return 1;
+        }
+
+        if (!string.IsNullOrEmpty(backupPath))
+        {
+            AnsiConsole.MarkupLine($"[yellow]Original file backed up to:[/] {Path.GetRelativePath(Directory.GetCurrentDirectory(), backupPath)}");
+        }
+
+        AnsiConsole.MarkupLine($"[green]Safely restored[/] '{relativePath}' from commit [yellow]{commit.Id}[/]");
 
         return 0;
     }
