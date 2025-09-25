@@ -17,7 +17,7 @@ public sealed class AmendCommand : Command<AmendCommand.Settings>
     {
         var commits = CommitManager.LoadCommits();
 
-        if (commits == null)
+        if (commits.Count == 0)
         {
             AnsiConsole.MarkupLine("[red]No commit to amend[/]");
             return 1;

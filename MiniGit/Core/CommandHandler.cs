@@ -15,7 +15,7 @@ namespace MiniGit.Core
 
 
             var targetDir = Path.GetDirectoryName(snapshotRoot);
-            if (!string.IsNullOrWhiteSpace(snapshotRoot))
+            if (!Directory.Exists(snapshotRoot))
             {
                 Logger.INFO($"Snapshot folder with id: {commitId} does not exist, creating one...");
                 Directory.CreateDirectory(snapshotRoot);
