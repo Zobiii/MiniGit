@@ -90,5 +90,48 @@ namespace MiniGit.Core
         {
             return File.Exists(LockFilePath);
         }
+
+        public static (bool Success, T? Result) ExecuteWithLock<T>(Func<T> func, int timeoutMs = 30000)
+        {
+            Logger.INFO("Attempting to acquire repository lock for function...");
+
+            bool lockAcquired = false;
+            T? result = default;
+
+            try
+            {
+                if (Monitor.TryEnter(_lockObject, timeoutMs))
+                {
+                    lockAcquired = true;
+
+                    CreateLockFile();
+                    Logger.INFO("Repository lock acquired successfully");
+
+                    result = func();
+
+                    Logger.INFO("Repository operation completed successfully");
+                    return (true, result);
+                }
+                else
+                {
+                    Logger.ERROR("Failed to acquire repository lock within timeout");
+                    return (false, default);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.ERROR($"Error during locked repository operation: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                if (lockAcquired)
+                {
+                    RemoveLockFile();
+                    Monitor.Exit(_lockObject);
+                    Logger.INFO("Repository lock released");
+                }
+            }
+        }
     }
 }

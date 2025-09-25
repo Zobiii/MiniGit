@@ -41,13 +41,12 @@ public sealed class AmendCommand : Command<AmendCommand.Settings>
         last.Message = settings.Message.Length > 0 ? string.Join(" ", settings.Message) : last.Message;
         last.Files = hashes;
 
-        bool success = CommitManager.SaveCommits(commits);
+        bool success = CommitManager.AtomicAmend(last, files);
         if (!success)
         {
-            AnsiConsole.MarkupLine("[red]Fehler: Commit konnte nicht gespeichert werden (Repository gesperrt?)[/]");
+            AnsiConsole.MarkupLine("[red]Fehler: Atomarer Amend fehlgeschlagen (Repository gesperrt oder IO-Fehler?)[/]");
             return 1;
         }
-        CommandHandler.ReplaceSnapshot(last.Id, files, hashes);
 
         AnsiConsole.MarkupLine($"[green]Commit [bold]{last.Id}[/] amended.[/]");
         return 0;

@@ -41,4 +41,72 @@ public static class CommitManager
     {
         return LoadCommits().FirstOrDefault(c => c.Id.Equals(Id, StringComparison.OrdinalIgnoreCase));
     }
+
+    public static bool AtomicCommit(Commit newCommit, List<string> filesToSnapshot)
+    {
+        var (success, result) = RepositoryLock.ExecuteWithLock<bool>(() =>
+        {
+            Logger.INFO($"Starting atomic commit for ID: {newCommit.Id}");
+
+            using var transaction = new CommitTransaction(newCommit.Id);
+
+            var commits = LoadCommits();
+            commits.Add(newCommit);
+
+            if (!transaction.Prepare(commits, filesToSnapshot))
+            {
+                Logger.ERROR("Atomic commit failed during prepare phase");
+                return false;
+            }
+
+            if (!transaction.Commit())
+            {
+                Logger.ERROR("Atomic commit failed during commit phase");
+                return false;
+            }
+
+            Logger.INFO($"Atomic commit completed successfully for ID: {newCommit.Id}");
+            return true;
+        });
+
+        return success && result;
+    }
+
+    public static bool AtomicAmend(Commit amendedCommit, List<string> filesToSnapshot)
+    {
+        var (success, result) = RepositoryLock.ExecuteWithLock<bool>(() =>
+        {
+            Logger.INFO($"Starting atomic amend for ID: {amendedCommit.Id}");
+
+            using var transaction = new CommitTransaction(amendedCommit.Id);
+
+            var commits = LoadCommits();
+            if (commits.Count > 0)
+            {
+                commits[commits.Count - 1] = amendedCommit;
+            }
+            else
+            {
+                Logger.ERROR("No commits to amend");
+                return false;
+            }
+
+            if (!transaction.Prepare(commits, filesToSnapshot))
+            {
+                Logger.ERROR("Atomic amend failed during prepare phase");
+                return false;
+            }
+
+            if (!transaction.Commit())
+            {
+                Logger.ERROR("Atomic amend failed during commit phase");
+                return false;
+            }
+
+            Logger.INFO($"Atomic amend completed successfully for ID: {amendedCommit.Id}");
+            return true;
+        });
+
+        return success && result;
+    }
 }

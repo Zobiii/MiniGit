@@ -37,23 +37,15 @@ public sealed class CommitCommand : Command<CommitCommand.Settings>
 
 
 
-        var commits = CommitManager.LoadCommits();
-
-        commits.Add(newCommit);
-        Logger.INFO("Submitted new commit");
-
-        bool success = CommitManager.SaveCommits(commits);
+        bool success = CommitManager.AtomicCommit(newCommit, files);
         if (!success)
         {
-            Output.Console("Fehler: Commit konnte nicht gespeichert werden (Repository gesperrt?)");
+            Output.Console("Fehler: Atomarer Commit fehlgeschlagen(Repository gesperrt oder IO - Fehler ?)");
             return 1;
         }
-        Logger.INFO($"Commit: {newCommit.Id} saved");
 
         Output.Console($"Commit erstellt mit ID: {newCommit.Id}");
-
-        CommandHandler.CreateSnapshot(files, newCommit.Id);
-        Logger.DEBUG($"Created new snapshot folder: {newCommit.Id}");
+        Logger.INFO($"Atomic commit completed for ID: {newCommit.Id}");
 
         return 0;
     }
