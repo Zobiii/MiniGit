@@ -5,35 +5,6 @@ namespace MiniGit.Core
 {
     public static class CommandHandler
     {
-        public static void CreateSnapshot(List<string> files, string commitId)
-        {
-            string snapshotRoot = Path.Combine(".minigit", "snapshots", commitId);
-
-
-
-            var targetDir = Path.GetDirectoryName(snapshotRoot);
-            if (!Directory.Exists(snapshotRoot))
-            {
-                Logger.INFO($"Snapshot folder with id: {commitId} does not exist, creating one...");
-                Directory.CreateDirectory(snapshotRoot);
-            }
-            foreach (var file in files)
-            {
-                var relativePath = Path.GetRelativePath(Directory.GetCurrentDirectory(), file);
-                var targetPath = Path.Combine(snapshotRoot, relativePath);
-                var subdir = Path.GetDirectoryName(targetPath);
-
-                if (!Directory.Exists(subdir))
-                {
-                    Directory.CreateDirectory(subdir!);
-                }
-                File.Copy(file, targetPath, overwrite: true);
-                Logger.DEBUG($"Copying file {file} to snapshot folder with id: {commitId}");
-
-            }
-            Output.Console($"Snapshot gespeichert unter: {snapshotRoot}");
-        }
-
         public static StatusInfo GetStatusInfo()
         {
             Logger.INFO("Getting working directory status...");
@@ -86,33 +57,6 @@ namespace MiniGit.Core
                 ChangedFiles = changedFiles,
                 DeletedFiles = deletedFiles
             };
-        }
-
-        public static void ReplaceSnapshot(string commitId, List<string> files, Dictionary<string, string> hashes)
-        {
-            Logger.INFO($"Replacing snapshot for commit {commitId}...");
-            string dir = Path.Combine(".minigit", "snapshots", commitId);
-            if (Directory.Exists(dir))
-            {
-                Logger.DEBUG($"Deleting existing snapshot directory: {dir}");
-                Directory.Delete(dir, recursive: true);
-            }
-
-            Logger.DEBUG($"Creating new snapshot directory: {dir}");
-            Directory.CreateDirectory(dir);
-
-            foreach (var file in files)
-            {
-                string relPath = Path.GetRelativePath(Directory.GetCurrentDirectory(), file);
-                string dest = Path.Combine(dir, relPath);
-
-                Logger.DEBUG($"Preparing to copy file: {relPath} -> {dir}");
-                Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
-                File.Copy(file, dest, true);
-                Logger.INFO($"Copyied file {relPath} to folder. New file in folder: {dest}");
-            }
-
-            Logger.INFO($"Snapshot replacement for commit {commitId} completed");
         }
 
         public static IEnumerable<string> GetFilesToProcess(string workingDir)
