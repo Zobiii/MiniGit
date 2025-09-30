@@ -1,7 +1,6 @@
 namespace MiniGit.Utils;
 
 using System.Diagnostics;
-using System.Reflection.Emit;
 using Spectre.Console;
 
 public static class FileLogger
@@ -21,7 +20,7 @@ public static class FileLogger
 
         var caller = new StackTrace().GetFrame(2)?.GetMethod()?.DeclaringType?.Name ?? "Unknown";
 
-        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
         string fileLog = $"{timestamp} - {caller}.cs - {level.ToUpper()} - {message}";
 
         Directory.CreateDirectory(".minigit");

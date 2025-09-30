@@ -1,7 +1,4 @@
 using System.Data;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using MiniGit.Commands;
 using MiniGit.Utils;
 
 namespace MiniGit.Core

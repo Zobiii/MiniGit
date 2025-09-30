@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Transactions;
 using MiniGit.Utils;
 
 namespace MiniGit.Core

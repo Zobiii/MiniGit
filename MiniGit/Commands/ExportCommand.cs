@@ -1,5 +1,4 @@
 using Spectre.Console.Cli;
-using MiniGit.Core;
 using Spectre.Console;
 using System.IO.Compression;
 

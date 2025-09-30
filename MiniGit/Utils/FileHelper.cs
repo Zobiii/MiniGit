@@ -1,5 +1,3 @@
-using Microsoft.VisualBasic;
-
 namespace MiniGit.Utils;
 
 public static class FileHelper

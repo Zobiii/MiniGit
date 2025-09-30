@@ -1,5 +1,3 @@
-using MiniGit.Utils;
-
 namespace MiniGit.Utils
 {
     public static class PathValidator

@@ -1,6 +1,4 @@
 using Spectre.Console.Cli;
-using MiniGit.Core;
-using System.Runtime.CompilerServices;
 using Spectre.Console;
 using MiniGit.Utils;
 

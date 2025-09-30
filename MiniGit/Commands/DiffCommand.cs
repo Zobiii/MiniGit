@@ -1,6 +1,5 @@
 using Spectre.Console.Cli;
 using MiniGit.Utils;
-using Spectre.Console;
 
 namespace MiniGit.Commands;
 

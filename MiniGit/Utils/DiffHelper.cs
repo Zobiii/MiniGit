@@ -1,5 +1,3 @@
-using System.IO.Enumeration;
-
 namespace MiniGit.Utils
 {
     public static class DiffHelper
